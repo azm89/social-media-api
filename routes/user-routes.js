@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const userController = require("../controllers/user-controller.js");
+const userController = require("../controllers/users-controller.js");
 
 // stem "/api/user"
 router.route("/post")
