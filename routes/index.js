@@ -1,16 +1,15 @@
-// Require express router
-const router = require('express').Router();
+const path = require("path");
+const router = require("express").Router();
+const apiThought = require("./thought-routes");
+const apiUser = require("./user-routes");
 
-// Import all of the API routes 
-const apiRoutes = require('./api');
+// API Routes
+router.use("/api/thought", apiThought);
+router.use("/api/user", apiUser);
 
-// add prefix of `/api` to all of the api routes
-router.use('/api', apiRoutes);
+// If no API routes are hit, send the React app
+router.use(function (req, res) {
+  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+});
 
-// 404 Status error message
-router.use((req, res) => {
-    res.status(404).send('<h1>404 Error....</h1>');
-  });
-
-// Module exports router
 module.exports = router;

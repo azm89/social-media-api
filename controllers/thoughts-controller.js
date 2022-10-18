@@ -1,114 +1,74 @@
-// Require Thoughts and Users Models
-const {Thoughts, Users} = require('../models');
+const db = require("../models")
 
-// Set up Thoughts Controller
-const thoughtsController = {
+module.exports = {
+  // POST new thought to database
+  create: function (req, res) {
+    db.Thought
+      .create(req.body)
+      .then(thought => {
+        db.User.findOneAndUpdate({ _id: thought.userId }, { $addToSet: { userThoughts: thought._id } }, { new: true })
+          .then(dbModel => res.json(dbModel))
+          .catch(err => res.status(422).json(err))
+      })
+      .catch(err => res.status(422).json(err))
+  },
 
-    // Create a new thought
-    createThoughts({params, body}, res) {
-        Thoughts.create(body)
-        .then(({_id}) => {
-            return Users.findOneAndUpdate({ _id: params.userId}, {$push: {thoughts: _id}}, {new: true});
-        })
-        .then(dbThoughtsData => {
-            if(!dbThoughtsData) {
-                res.status(404).json({message: 'No thoughts with this particular ID!'});
-                return;
-            }
-            res.json(dbThoughtsData)
-        })
-        .catch(err => res.json(err)); 
-    },
 
-    // Get all available Thoughts
-    getAllThoughts(req,res) {
-        Thoughts.find({})
-        .populate({path: 'reactions', select: '-__v'})
-        .select('-__v')
-        // .sort({_id: -1})
-        .then(dbThoughtsData => res.json(dbThoughtsData))
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
-    },
+  // GET all thoughts
+  findAll: function (req, res) {
+    db.Thought
+      .find({})
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err))
+  },
 
-    // Get a certain thought by ID
-    getThoughtsById({params}, res) {
-        Thoughts.findOne({ _id: params.id })
-        .populate({path: 'reactions',select: '-__v'})
-        .select('-__v')
-        .then(dbThoughtsData => {
-            if(!dbThoughtsData) {
-            res.status(404).json({message: 'No thoughts with this particular ID!'});
-            return;
-        }
-        res.json(dbThoughtsData)
-        })
-        .catch(err => {
-            console.log(err);
-            res.sendStatus(400);
-        });
-    },
+  // GET thought by ID
+  findById: function (req, res) {
+    db.Thought
+      .findOne({ _id: req.params.id })
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err))
+  },
 
-    // Update a current thought by ID
-    updateThoughts({params, body}, res) {
-        Thoughts.findOneAndUpdate({_id: params.id}, body, {new: true, runValidators: true})
-        .populate({path: 'reactions', select: '-__v'})
-        .select('-___v')
-        .then(dbThoughtsData => {
-            if (!dbThoughtsData) {
-                res.status(404).json({message: 'No thoughts with this particular ID!'});
-                return;
-            }
-                res.json(dbThoughtsData);
-        })
-        .catch(err => res.json(err));
-    },
 
-    // Delete a current thought by ID
-    deleteThoughts({params}, res) {
-        Thoughts.findOneAndDelete({_id: params.id})
-        .then(dbThoughtsData => {
-            if (!dbThoughtsData) {
-                res.status(404).json({message: 'No thoughts with this particular ID!'});
-                return;
-            }
-            res.json(dbThoughtsData);
-            })
-            .catch(err => res.status(400).json(err));
-    },
+  // PUT thought
+  updateThought: function (req, res) {
+    db.Thought
+      .findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err))
+  },
 
-    // Add a new Reaction
-    addReaction({params, body}, res) {
-        Thoughts.findOneAndUpdate({_id: params.thoughtId}, {$push: {reactions: body}}, {new: true, runValidators: true})
-        .populate({path: 'reactions', select: '-__v'})
-        .select('-__v')
-        .then(dbThoughtsData => {
-        if (!dbThoughtsData) {
-            res.status(404).json({message: 'No thoughts with this particular ID!'});
-            return;
-        }
-        res.json(dbThoughtsData);
-        })
-        .catch(err => res.status(400).json(err))
+  // PUT thought to add new reaction info
+  addReaction: function (req, res) {
+    db.Thought
+      .findOneAndUpdate({ _id: req.params.id }, { $addToSet: { thoughtReactions: req.body } }, { new: true })
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err))
+  },
 
-    },
+  // PUT thought to remove reaction info
+  removeReaction: function (req, res) {
+    db.Thought
+      .findOneAndUpdate({ _id: req.params.id }, { $pull: { thoughtReactions: { reactionId: req.params.reactionId } } }, { new: true })
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err))
+  },
 
-    // Delete a reaction by ID
-    deleteReaction({params}, res) {
-        Thoughts.findOneAndUpdate({_id: params.thoughtId}, {$pull: {reactions: {reactionId: params.reactionId}}}, {new : true})
-        .then(dbThoughtsData => {
-            if (!dbThoughtsData) {
-                res.status(404).json({message: 'No thoughts with this particular ID!'});
-                return;
-            }
-            res.json(dbThoughtsData);
-        })
-        .catch(err => res.status(400).json(err));
-    }
 
-};
-
-// Export module thought controller
-module.exports = thoughtsController;
+  // DELETE thought & remove its ID from its user's userThoughts array
+  deleteThought: function (req, res) {
+    db.Thought
+      .findOneAndRemove({ _id: req.params.id })
+      .then(thought =>
+        !thought
+          ? res.status(404).json({ message: "Cannot find a thought with that ID" })
+          : db.User.findOneAndUpdate(
+            { userThoughts: req.params.id },
+            { $pull: { userThoughts: req.params.id } },
+            { new: true }
+          ))
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err))
+  }
+}
