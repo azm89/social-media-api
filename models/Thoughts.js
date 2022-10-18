@@ -1,75 +1,44 @@
-// Require Mongoose and Moment
-const { Schema, model, Types } = require('mongoose');
-const moment = require('moment');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const reactions = require("./reactionModel");
+const formatDate = require("../utils/helpers");
 
-// ReactionsSchema
-const ReactionsSchema = new Schema(
-    {
-    // Set custom ID 
-    reactionId: {
-        type: Schema.Types.ObjectId,
-        default: ()=> new Types.ObjectId()
+const thoughtSchema = new Schema(
+  {
+    thoughtText: {
+      type: String,
+      required: true,
+      minLength: 1,
+      maxLength: 280
     },
-    reactionBody: {
-        type: String,
-        required: true,
-        maxlength: 280
+    userName: {
+      type: String,
+      required: true
     },
-    username: {
-        type: String,
-        required: true
+    userId: {
+      type: mongoose.Types.ObjectId,
+      required: true
     },
     createdAt: {
-        type: Date,
-        default: Date.now,
-        get: (createdAtVal) => moment(createdAtVal).format('MMM DD, YYYY [at] hh:mm a')
-    }
+      type: Date,
+      required: true,
+      default: Date.now,
+      get: timestamp => formatDate(timestamp)
     },
-    {
+    thoughtReactions: [reactions]
+  },
+  {
     toJSON: {
-        getters: true
-    } 
-    }
+      getters: true,
+      virtuals: true,
+    },
+  }
 );
 
-// ThoughtsSchema
-const ThoughtsSchema = new Schema(
-    {
-    thoughtText: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 280
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-        // Moment
-        get: (createdAtVal) => moment(createdAtVal).format('MMM DD, YYYY [at] hh:mm a')
-    },
-    username: {
-        type: String,
-        required: true
-    },
-    // Use ReactionsSchema to validate data
-    reactions: [ReactionsSchema]
-    },
-    {
-    toJSON: {
-        virtuals: true,
-        getters: true
-    },
-    id: false
-    }
-)
-
-// get total count of reactions
-ThoughtsSchema.virtual('reactionCount').get(function() {
-    return this.reactions.length;
+thoughtSchema.virtual("reactionCount").get(function () {
+  return this.thoughtReactions?.length;
 });
 
-// create the Thoughts model using the Thoughts Schema
-const Thoughts = model('Thoughts', ThoughtsSchema);
+const Thought = mongoose.model("Thought", thoughtSchema);
 
-// Export Thoughts Module
-module.exports = Thoughts;
+module.exports = Thought;
