@@ -1,4 +1,4 @@
-# e-commerce-back-end
+# social-media-api
 
 [![Node.js](https://img.shields.io/badge/built%20with-Node.js-3c873a)](https://nodejs.org/en/) [![MongoDB](https://img.shields.io/badge/built%20with-MongoDB-4db33d)](https://www.mongodb.com/) [![Mongoose](https://img.shields.io/badge/built%20with-Mongoose-880000)](https://mongoosejs.com/) [![Express.js](https://img.shields.io/badge/built%20with-Express.js-303030)](https://expressjs.com/)
  
