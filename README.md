@@ -19,7 +19,7 @@ Example back-end for a social media application. Built with Node.js, Express.js,
 
 ## Demonstration
 
-COMING SOON
+COMING SOON :(
 
 ## Installation
 If you want to run a copy of this app on your local machine, first you must install MongoDB:
