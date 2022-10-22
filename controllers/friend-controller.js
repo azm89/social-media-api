@@ -5,7 +5,7 @@ module.exports = {
         try {
             const friend = ( await User.findById(  req.params.friendId ) );
             if ( !friend ) {
-                res.status(404).json( { message: `Friend id invalid! could not find user with id: ${ req.params.friendId }` } );
+                res.status(404).json( { message: `Invalid friend id! Could not find user with that id!` } );
                 return;
             } 
             const user = await User.findOneAndUpdate( 
@@ -14,7 +14,7 @@ module.exports = {
                 { runValidators: true, new: true }
             );
             !user
-            ? res.status(404).json( { message: `User with id: ${ req.params.userId } does not exist!` } )
+            ? res.status(404).json( { message: `User with that id does not exist!` } )
             : res.status(200).json( user );
 
 
@@ -30,7 +30,7 @@ module.exports = {
             { new: true }
          );
          !user
-         ? res.status(404).json( { message: `User with id: ${ req.params.userId } does not exist!` } )
+         ? res.status(404).json( { message: `User with that id does not exist!` } )
          : res.status(200).json( user );
     }
 }
