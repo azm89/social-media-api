@@ -6,12 +6,12 @@ const {
     createThought,
     updateThought,
     deleteThought
-} = require( '../../controllers/thoughtController' );
+} = require( '../../controllers/thoughts-controller' );
 
 const {
     addReaction,
     deleteReaction
-} = require( '../../controllers/reactionsController' );
+} = require( '../../controllers/reactions-controller' );
 
 thoughtRouter.route( '/' )
     .get( getAllThoughts )

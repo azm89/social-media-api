@@ -6,12 +6,12 @@ const {
     createUser,
     updateUser,
     deleteUser
-} = require( '../../controllers/userController' );
+} = require( '../../controllers/users-controller' );
 
 const {
     addFriend,
     removeFriend
-} = require( '../../controllers/friendController' );
+} = require( '../../controllers/friends-controller' );
 
 userRouter.route( '/' )
     .get( getAllUsers )
