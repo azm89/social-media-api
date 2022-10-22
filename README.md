@@ -1,4 +1,4 @@
-# e-commerce-back-end
+# social-media-api
 
 [![Node.js](https://img.shields.io/badge/built%20with-Node.js-3c873a)](https://nodejs.org/en/) [![MongoDB](https://img.shields.io/badge/built%20with-MongoDB-4db33d)](https://www.mongodb.com/) [![Mongoose](https://img.shields.io/badge/built%20with-Mongoose-880000)](https://mongoosejs.com/) [![Express.js](https://img.shields.io/badge/built%20with-Express.js-303030)](https://expressjs.com/)
  
@@ -19,7 +19,7 @@ Example back-end for a social media application. Built with Node.js, Express.js,
 
 ## Demonstration
 
-COMING SOON
+COMING SOON :(
 
 ## Installation
 If you want to run a copy of this app on your local machine, first you must install MongoDB:
