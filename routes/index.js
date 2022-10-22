@@ -4,8 +4,8 @@ const apiThought = require("./thought-routes");
 const apiUser = require("./user-routes");
 
 // API Routes
-router.use("/api/thought", apiThought);
-router.use("/api/user", apiUser);
+router.use("/api/thoughts", apiThought);
+router.use("/api/users", apiUser);
 
 router.use( ( req, res ) => {
   return res.send( 'Wrong route!' );

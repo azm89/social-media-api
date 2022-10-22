@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const userController = require("../controllers/users-controller.js");
 
-//"/api/user"
+//"/api/users"
 router.route("/post")
   .post(userController.create);
 
@@ -16,10 +16,10 @@ router.route("/:id")
 router.route("/update/:id")
   .put(userController.updateUser);
 
-router.route("/add/:id/friends/:friendId")
+router.route("/:userId/friends/:friendId")
   .put(userController.addFriend);
 
-router.route("/remove/:id/friends/:friendId")
+router.route("/:userId/friends/:friendId")
   .put(userController.removeFriend);
 
 
